@@ -1,0 +1,12 @@
+//cemil registeri ikiye bolmus market user diye 
+sizinki user kismi -> css ve sql icin folderlar var
+
+// db mantigi: market ownerlar market_id ile productlist.sql e 
+urun yukluyor (id urunun kendi id si auto_incre. var)
+
+// dashboard.php indexim dbden $products aliyor ondan yardim
+alarak ownera baslayabilirsiniz.
+
+// ownerdaki her sey tam suan ornek db ile deneyebilirsiniz
+fakat hoca trash value olmasin demis proje bitince silmemiz lazim
+(productlist.sql 29-57 araligi)

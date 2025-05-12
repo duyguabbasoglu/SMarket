@@ -1,0 +1,13 @@
+{
+    "name": "smarket/smarket",
+    "description": "smarket",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "phpmailer/phpmailer": "^6.10"
+    }
+}

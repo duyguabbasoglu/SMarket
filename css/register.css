@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+*{
+    font-family: "Patrick Hand", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body{
+    background-color: beige;
+}
+
+.header h1{
+    font-size: 60px;
+    margin-bottom: 30px;
+}
+.header h4{
+    font-size: 20px;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header{
+    text-align: center;
+}
+
+.content-area{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    border: 2px solid beige;
+}
+
+.goBack{
+    position: absolute;
+    bottom: 20px;
+    text-align: center;
+}
+
+.register{
+    position: relative;
+    justify-content: flex-start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 400px;
+    min-height: 400px;
+    padding-bottom: 70px;
+    margin-right: 15px;
+    border-radius: 10px;
+    background-color: rgb(69, 129, 100);
+    border: 2px solid;
+}
+
+.registerPart{
+    text-align: center;
+}
+
+.registerPart p {
+    margin-bottom: 15px;
+}
+
+.registerPart span:first-child{
+    display: inline-block;
+    width: 90px;
+}
+
+.content-area h1{
+    font-size: 40px;
+}
+
+input{
+    width: 160px;
+    outline: none;
+    border: 0;
+    background-color: inherit;
+    border-bottom: 2px solid rgb(230, 230, 221);
+    font-size: 16px;
+}
+
+
+button[type="submit"]{
+    margin-top: 10px;
+    width: 100px;
+    background-color: greenyellow;
+}
+
+.goBack p{
+    padding-top: 20px;
+}
+
+.goBack a{
+    text-decoration: none;
+    
+}
+
+.goBack a:visited{
+    color: inherit;
+}
+
+.goBack a:hover{
+    color: wheat;
+}
+
+.error {
+    color: #ff4444;
+    font-size: 16px;
+    display: block;
+    margin-top: 5px;
+}

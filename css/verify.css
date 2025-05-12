@@ -1,0 +1,39 @@
+.verification {
+    background-color: rgb(69, 129, 100);
+    border: 2px solid #fff;
+    border-radius: 15px;
+    padding: 20px;
+    width: 400px;
+    color: black;
+    text-align: center;
+}
+.verification input {
+    padding: 10px;
+    font-size: 20px;
+    margin: 15px 0;
+    width: 150px;
+    text-align: center;
+    letter-spacing: 5px;
+}
+.success-message {
+    background-color: #4CAF50;
+    color: black;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+.error-message {
+    background-color: #f44336;
+    color: white;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+.resend-link {
+    margin-top: 15px;
+    color: #e9ff67;
+    text-decoration: none;
+}
+.resend-link:hover {
+    text-decoration: underline;
+}
