@@ -37,19 +37,17 @@ if(!empty($_POST)){
         $errors['emailAddress'] = "Please enter a valid email address";
     }
     
-    if($userType == "user"){
-        $a = $db->prepare("select count(*) email from consumer_user where email = ?");
-        $a->execute([$emailAddress]);
-        $count = $a->fetch(PDO::FETCH_ASSOC);
-    }else if($userType == "market"){
-        $a = $db->prepare("select count(*) email from market_user where email = ?");
-        $a->execute([$emailAddress]);
-        $count = $a->fetch(PDO::FETCH_ASSOC);
-    }
+    $consumerQuery = $db->prepare("SELECT COUNT(*) as count FROM consumer_user WHERE email = ?");
+    $marketQuery = $db->prepare("SELECT COUNT(*) as count FROM market_user WHERE email = ?");
+    $consumerQuery->execute([$emailAddress]);
+    $marketQuery->execute([$emailAddress]);
+    $consumerExists = $consumerQuery->fetch(PDO::FETCH_ASSOC)['count'] > 0;
+    $marketExists = $marketQuery->fetch(PDO::FETCH_ASSOC)['count'] > 0;
 
-    if($count["email"] > 0){
-        var_dump($count["email"]);
-        $errors['emailAddress'] = "There is already an user with that email address.";
+    if (($userType === "user" && $marketExists) || ($userType === "market" && $consumerExists)) {
+        $errors['emailAddress'] = "This email address is already used in the other user type.";
+    } elseif (($userType === "user" && $consumerExists) || ($userType === "market" && $marketExists)) {
+        $errors['emailAddress'] = "There is already a user with that email address.";
     }
 
     //Password

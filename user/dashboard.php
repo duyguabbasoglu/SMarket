@@ -13,8 +13,17 @@ $keyword = $_GET['q'] ?? '';
 $stmt = $db->prepare("SELECT city, district FROM consumer_user WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
+    session_unset();
+    session_destroy();
+    header("Location: ../index.php?error=account_removed");
+    exit;
+}
+
 $city = $user['city'];
 $district = $user['district'];
+
 
 if ($keyword) {
     $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
@@ -71,6 +80,7 @@ function calculateDiscountPrice($price, $discount_price, $expiration_date) {
         return $discount_price;
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -136,6 +146,26 @@ function calculateDiscountPrice($price, $discount_price, $expiration_date) {
             border-radius: 5px;
             cursor: pointer;
         }
+        .logout-link {
+            color: darkmagenta !important;
+            font-weight: bold;
+        }
+
+        .logout-link:hover {
+            color: darkmagenta !important;
+            text-decoration: underline;
+        }
+
+        .out-stock-btn {
+            background-color: #aaa;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: not-allowed;
+        }
+        .cart-link {color:rgb(222, 182, 198); font-weight: bold;}
+        .cart-link:hover {color:rgb(222, 182, 198); text-decoration: underline;}
     </style>
 </head>
 <body>
@@ -153,7 +183,10 @@ function calculateDiscountPrice($price, $discount_price, $expiration_date) {
         <i class="fa-solid fa-user"></i> 
         <a href="edit.php" class="profile-link"><?= htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['email']) ?></a>
         <span id="uwu">|</span>
-        <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i> Cart (<?= isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'quantity')) : 0 ?>)</a>
+        <a href="cart.php" class="cart-link"><i class="fa-solid fa-cart-shopping"></i> Cart (<?= isset($_SESSION['cart']) ? array_sum(array_column($_SESSION['cart'], 'quantity')) : 0 ?>)</a>
+        <span id="uwu">|</span>
+        <a href="../logout.php" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+
     </div>
 </div>
 
@@ -171,7 +204,17 @@ function calculateDiscountPrice($price, $discount_price, $expiration_date) {
             <p>&#9201; Expires: <?= htmlspecialchars($product['expiration_date']) ?></p>
         </div>
         <div class="card-footer">
-            <a href="cartUpdate.php?id=<?= $product['id'] ?>">&#128722; Add</a>
+            <?php $cartQty = $_SESSION['cart'][$product['id']]['quantity'] ?? 0; 
+            $remainingStock = $product['stock'] - $cartQty;
+            $isOutOfStock = $remainingStock <= 0; ?>
+<div class="card-footer">
+    <?php if ($isOutOfStock): ?>
+        <button disabled class="out-stock-btn">Out of Stock</button>
+    <?php else: ?>
+        <button onclick="addToCart(<?= $product['id'] ?>, this)">&#128722; Add</button>
+    <?php endif; ?>
+</div>
+
         </div>
     </div>
 <?php endforeach; ?>
@@ -190,5 +233,29 @@ function calculateDiscountPrice($price, $discount_price, $expiration_date) {
     <?php endif; ?>
 </div>
 <?php endif; ?>
+<script>
+function addToCart(id, btn) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "add.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    xhr.onload = function () {
+        const res = JSON.parse(this.responseText);
+        if (res.success) {
+            document.querySelector(".right-user a[href='cart.php']").innerHTML =
+                '<i class="fa-solid fa-cart-shopping"></i> Cart (' + res.totalItems + ')';
+        } else {
+            alert(res.error || "Something went wrong!");
+            if (res.error === "Stock limit reached" && btn) {
+                btn.disabled = true;
+                btn.innerText = "Out of Stock";
+            }
+        }
+    };
+
+    xhr.send("id=" + id);
+}
+</script>
+
 </body>
 </html>

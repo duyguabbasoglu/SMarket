@@ -1,43 +1,41 @@
 <?php
 session_start();
 require '../db.php';
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'consumer') {
-    header("Location: ../login/login.php");
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;
 }
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: dashboard.php");
+if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
+    echo json_encode(['success' => false, 'error' => 'Invalid ID']);
     exit;
 }
 
-$product_id = intval($_GET['id']);
-
+$id = intval($_POST['id']);
 $stmt = $db->prepare("SELECT * FROM productlist WHERE id = ?");
-$stmt->execute([$product_id]);
+$stmt->execute([$id]);
 $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$product || strtotime($product['expiration_date']) < time()) {
-    header("Location: dashboard.php?error=expired");
+if (!$product) {
+    echo json_encode(['success' => false, 'error' => 'Product not found']);
     exit;
 }
 
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+$cart = $_SESSION['cart'] ?? [];
+$current_quantity = $cart[$id]['quantity'] ?? 0;
+$new_quantity = $current_quantity + 1;
+
+if ($new_quantity > $product['stock']) {
+    echo json_encode(['success' => false, 'error' => 'Stock limit reached']);
+    exit;
 }
 
-if (isset($_SESSION['cart'][$product_id])) {
-    $_SESSION['cart'][$product_id]['quantity'] += 1;
-} else {
-    $_SESSION['cart'][$product_id] = [
-        'title' => $product['title'],
-        'price' => $product['discount_price'],
-        'image' => $product['image'],
-        'quantity' => 1
-    ];
-}
+$product['quantity'] = $new_quantity;
+$cart[$id] = $product;
+$_SESSION['cart'] = $cart;
 
-header("Location: dashboard.php?success=added");
-exit;
-?>
+$totalItems = array_sum(array_column($cart, 'quantity'));
+
+echo json_encode(['success' => true, 'totalItems' => $totalItems]);

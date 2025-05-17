@@ -95,6 +95,17 @@ function calculateDiscountPrice($price, $discount_price, $expiration_date) {
             border-radius: 5px;
             cursor: pointer;
         }
+        .logout-link {
+            color: darkmagenta !important;
+            font-weight: bold;
+        }
+
+        .logout-link:hover {
+            color: darkmagenta !important;
+            text-decoration: underline;
+        }
+        .cart-link {color:rgb(222, 182, 198); font-weight: bold;}
+        .cart-link:hover {color:rgb(222, 182, 198); text-decoration: underline;}
     </style>
 </head>
 <body>
@@ -114,7 +125,9 @@ function calculateDiscountPrice($price, $discount_price, $expiration_date) {
             <?= htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['email']) ?>
         </a>
         <span id="uwu">|</span>
-        <a href="cart.php"><i class="fa-solid fa-cart-shopping"></i> Cart (<?= array_sum(array_column($cart, 'quantity')) ?>)</a>
+        <a href="cart.php" class="cart-link"><i class="fa-solid fa-cart-shopping"></i> Cart (<?= array_sum(array_column($cart, 'quantity')) ?>)</a>
+        <span id="uwu">|</span>
+        <a href="../logout.php" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
 </div>
 
@@ -132,7 +145,8 @@ function calculateDiscountPrice($price, $discount_price, $expiration_date) {
                     <h4><?= htmlspecialchars($item['title']) ?></h4>
                     <p>Price: <?= $discounted ?> TL</p>
                     <p>Amount: 
-                        <input type="number" class="quantity-input" value="<?= htmlspecialchars($item['quantity']) ?>" min="1" onchange="updateQuantity(<?= $id ?>, this.value)">
+                        <input 
+                    type="number" class="quantity-input" value="<?= htmlspecialchars($item['quantity']) ?>" min="1" max="<?= htmlspecialchars($item['stock']) ?>"onchange="updateQuantity(<?= $id ?>, this.value)">
                     </p>
                     <p class="item-total">Total: <?= number_format($discounted * $item['quantity'], 2) ?> TL</p>
                 </div>
@@ -155,10 +169,18 @@ function calculateDiscountPrice($price, $discount_price, $expiration_date) {
 
 <script>
 function updateQuantity(id, quantity) {
+    const input = document.querySelector(`[data-id='${id}'] .quantity-input`);
+    const max = parseInt(input.getAttribute("max"));
+
+    if (quantity > max) {
+        input.value = max;
+        quantity = max;
+    }
+
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "cartUpdate.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onload = function() {
+    xhr.onload = function () {
         if (this.status === 200) {
             const res = JSON.parse(this.responseText);
             document.querySelector(`[data-id='${id}'] .item-total`).innerText = "Total: " + res.itemTotal + " TL";
@@ -167,6 +189,7 @@ function updateQuantity(id, quantity) {
     };
     xhr.send("id=" + id + "&quantity=" + quantity);
 }
+
 
 function purchaseCart() {
     const xhr = new XMLHttpRequest();

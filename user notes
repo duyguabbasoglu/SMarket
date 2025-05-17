@@ -1,12 +1,22 @@
-//cemil registeri ikiye bolmus market user diye 
-sizinki user kismi -> css ve sql icin folderlar var
+// cemil registeri ikiye bölmüş: market user diye
+Sizinki user kısmı oluyor → CSS ve SQL için klasörler var.
 
-// db mantigi: market ownerlar market_id ile productlist.sql e 
-urun yukluyor (id urunun kendi id si auto_incre. var)
+// db mantığı:
+Market ownerlar market_id ile productlist.sql dosyasına ürün yüklüyor 
+(id ürünün kendi id’si, AUTO_INCREMENT var).
 
-// dashboard.php indexim dbden $products aliyor ondan yardim
-alarak ownera baslayabilirsiniz.
+// discount mantığı:
+3 günden azsa   %50
+7 günden azsa   %20
 
-// ownerdaki her sey tam suan ornek db ile deneyebilirsiniz
-fakat hoca trash value olmasin demis proje bitince silmemiz lazim
-(productlist.sql 29-57 araligi)
+Sadece ürünün fiyatını ve fotoğrafını girmeniz yeterli, 
+veritabanından bakabilirsiniz.
+
+// dashboard.php indexim
+Veritabanından $products alıyor, oradan yardım alarak 
+ownera başlayabilirsiniz.
+
+// ownerdaki her şey tam şu an
+Örnek veritabanıyla deneyebilirsiniz, FAKAT
+hoca trash value olmasın demiş. o yüzden proje bitince 
+silmemiz lazım (productlist.sql 29–57 aralığı).
